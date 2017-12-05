@@ -1,0 +1,21 @@
+resources:
+- name: repository
+  type: git
+  source:
+    uri: https://github.com/gbgdev/concourse-lab.git
+
+- name: release-docker-image
+  type: docker-image
+  source:
+    repository: gbgdev/dummy
+
+jobs:
+- name: create-release-image
+  public: true
+  plan:
+  - get: repository
+  - put: release-docker-image
+    params:
+      build: repository
+      tag: gbgdev/1.0
+      tag_as_latest: true
