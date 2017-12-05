@@ -18,6 +18,7 @@ jobs:
   public: true
   plan:
   - get: repository
+    trigger: true
   - task: write-version
     file: repository/task_release_version.yml
   - put: release-docker-image
