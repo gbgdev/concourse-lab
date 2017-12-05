@@ -9,5 +9,4 @@ inputs:
  - name: repository
 
 run:
-  path: ls
-  # path: ./script.sh
+  path: ./repository/01_basic_pipeline/tasks/script.sh
