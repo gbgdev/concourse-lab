@@ -5,6 +5,9 @@ image_resource:
   type: docker-image
   source: {repository: busybox}
 
+inputs:
+ - name: project
+
 run:
   path: echo
-  args: [dummy]
+  args: ['Testing']

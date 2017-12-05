@@ -1,0 +1,7 @@
+---
+jobs:
+- name: job-dummy
+  public: true
+  plan:
+  - task: dummy-task
+    file: repository/tasks/dummy-task.yml
