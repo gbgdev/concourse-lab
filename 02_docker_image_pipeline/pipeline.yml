@@ -17,8 +17,26 @@ jobs:
   public: true
   plan:
   - get: repository
+  - task: write-version
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: alpine/git
+      inputs:
+          - name: repository
+      outputs:
+          - name: tags
+      run:
+        dir: repository
+        path: sh
+        args:
+        - -exc
+        - |
+          git rev-parse --short HEAD > ../tags/git_rev
   - put: release-docker-image
     params:
       build: repository
-      tag: repository/tag
+      tag: tags/git_rev
       tag_as_latest: true
