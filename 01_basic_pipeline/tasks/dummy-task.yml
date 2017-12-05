@@ -9,5 +9,4 @@ inputs:
  - name: project
 
 run:
-  path: echo
-  args: ['Testing']
+  path: ./script.sh
