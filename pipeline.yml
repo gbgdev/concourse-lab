@@ -2,8 +2,10 @@ resources:
 - name: repository
   type: git
   source:
-    uri: git@github.com:gbgdev/concourse-lab.git
+    uri: https://github.com/gbgdev/concourse-lab.git
     branch: master
+    username: {{github-username}}
+    password: {{github-token}}
 
 - name: release-docker-image
   type: docker-image
