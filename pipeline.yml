@@ -4,7 +4,6 @@ resources:
   source:
     uri: git@github.com:gbgdev/concourse-lab.git
     branch: master
-    private_key: {{github-private-key}}
 
 - name: release-docker-image
   type: docker-image
