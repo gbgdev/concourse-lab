@@ -20,5 +20,5 @@ jobs:
   - put: release-docker-image
     params:
       build: repository
-      tag: 1.0
+      tag: repository/tag
       tag_as_latest: true
