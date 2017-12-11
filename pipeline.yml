@@ -1,3 +1,9 @@
+resource_types:
+- name: slack-notification
+  type: docker-image
+  source:
+    repository: cfcommunity/slack-notification-resource
+
 resources:
 - name: repository
   type: git
@@ -14,6 +20,11 @@ resources:
     username: {{docker-hub-username}}
     password: {{docker-hub-password}}
 
+- name: notify
+  type: slack-notification
+  source:
+    url: {{slack-webhook}}
+
 jobs:
 - name: create-release-image
   public: true
@@ -27,3 +38,21 @@ jobs:
       build: repository
       tag: tags/git_rev
       tag_as_latest: true
+    on_success:
+      put: notify
+      params:
+        channel: {{slack-channel}}
+        username: {{slack-username}}
+        icon_url: {{slack-icon-url}}
+        attachments: '[
+          {"color":"good","text":"[Reporter API - $BUILD_PIPELINE_NAME] Successfully released the image. <http://ci.fasd.club/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>"}
+      ]'
+    on_failure:
+      put: notify
+      params:
+        channel: {{slack-channel}}
+        username: {{slack-username}}
+        icon_url: {{slack-icon-url}}
+        attachments: '[
+          {"color":"danger","text":"[Reporter API - $BUILD_PIPELINE_NAME] Failed to release image. <http://ci.fasd.club/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>"}
+        ]'
