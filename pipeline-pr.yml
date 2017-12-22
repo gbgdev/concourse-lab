@@ -51,8 +51,8 @@ jobs:
         - -cx
         - |
           cd pull-request/demo
-          npm install
-          npm test
+          # npm install
+          # npm test
     on_success:
       do:
       - put: notify
