@@ -11,6 +11,11 @@ resources:
     repo: gbgdev/concourse-lab
     access_token: {{github-token}}
 
+- name: notify
+  type: slack-notification
+  source:
+    url: {{slack-webhook}}
+
 jobs:
 - name: verify-pull-request
   plan:
@@ -37,6 +42,22 @@ jobs:
     on_success:
       put: pull-request
       params: { path: pull-request, status: success }
+      put: notify
+      params:
+        channel: {{slack-channel}}
+        username: {{slack-username}}
+        icon_url: {{slack-icon-url}}
+        attachments: '[
+          {"color":"danger","text":"[Reporter Web - $BUILD_PIPELINE_NAME] Success on verifying pull request."}
+        ]'
     on_failure:
       put: pull-request
       params: { path: pull-request, status: failure }
+      put: notify
+      params:
+        channel: {{slack-channel}}
+        username: {{slack-username}}
+        icon_url: {{slack-icon-url}}
+        attachments: '[
+          {"color":"danger","text":"[Reporter Web - $BUILD_PIPELINE_NAME] Failed to verify pull request."}
+        ]'
