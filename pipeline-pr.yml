@@ -24,11 +24,12 @@ jobs:
       image_resource:
         type: docker-image
         source: { repository: node, tag: 8-alpine }
+      inputs:
+      - name: pull-request
       run:
         path: sh
         args:
         - -cx
-        - npm test
         - ls -al
     on_success:
       put: pull-request
