@@ -30,7 +30,11 @@ jobs:
         path: sh
         args:
         - -cx
-        - ls -al
+        - |
+          cd pull-request/demo
+          npm install
+          npm test
+        # - ls -al pull-request/demo
     on_success:
       put: pull-request
       params: { path: pull-request, status: success }
