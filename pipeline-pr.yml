@@ -1,0 +1,26 @@
+resource_types:
+- name: pull-request
+  type: docker-image
+  source:
+    repository: jtarchie/pr
+
+resources:
+- name: pull-request
+  type: pull-request
+  source:
+    repo: gbgdev/concourse-lab
+    access_token: {{github-token}}
+
+jobs:
+- name: verify-pull-request
+  plan:
+  - get: pull-request
+    trigger: true
+  - put: pull-request
+    params: { path: pull-request, status: pending }
+    on_success:
+      put: pull-request
+      params: { path: pull-request, status: success }
+    on_failure:
+      put: pull-request
+      params: { path: pull-request, status: failure }
