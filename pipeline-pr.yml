@@ -12,7 +12,7 @@ resource_types:
 resources:
 - name: pull-request
   type: pull-request
-  check_every: 5s
+  check_every: 3s
   source:
     repo: gbgdev/concourse-lab
     access_token: {{github-token}}
