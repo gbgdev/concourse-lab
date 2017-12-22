@@ -1,0 +1,68 @@
+resource_types:
+- name: pull-request
+  type: docker-image
+  source:
+    repository: jtarchie/pr
+
+- name: slack-notification
+  type: docker-image
+  source:
+    repository: cfcommunity/slack-notification-resource
+
+resources:
+- name: pull-request
+  type: pull-request
+  source:
+    repo: gbgdev/concourse-lab
+    access_token: {{github-token}}
+
+- name: notify
+  type: slack-notification
+  source:
+    url: {{slack-webhook}}
+
+jobs:
+- name: verify-pull-request
+  plan:
+  - get: pull-request
+    trigger: true
+  - put: pull-request
+    params: { path: pull-request, status: pending }
+  - task: some-task
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: { repository: node, tag: 8-alpine }
+      inputs:
+      - name: pull-request
+      run:
+        path: sh
+        args:
+        - -cx
+        - |
+          cd pull-request/demo
+          npm install
+          npm test
+    on_success:
+      put: pull-request
+      params: { path: pull-request, status: success }
+      put: notify
+      params:
+        channel: {{slack-channel}}
+        username: {{slack-username}}
+        icon_url: {{slack-icon-url}}
+        attachments: '[
+          {"color":"danger","text":"[Reporter Web - $BUILD_PIPELINE_NAME] Success on verifying pull request."}
+        ]'
+    on_failure:
+      put: pull-request
+      params: { path: pull-request, status: failure }
+      put: notify
+      params:
+        channel: {{slack-channel}}
+        username: {{slack-username}}
+        icon_url: {{slack-icon-url}}
+        attachments: '[
+          {"color":"danger","text":"[Reporter Web - $BUILD_PIPELINE_NAME] Failed to verify pull request."}
+        ]'
