@@ -5,29 +5,22 @@ resource_types:
     repository: jtarchie/pr
 
 resources:
-- name: pull-request-repository
+- name: pull-request
   type: pull-request
   source:
     repo: gbgdev/concourse-lab
-    username: {{github-username}}
-    password: {{github-token}}
+    access_token: {{github-token}}
 
 jobs:
 - name: verify-pull-request
   plan:
-  - get: pull-request-repository
+  - get: pull-request
     trigger: true
-  - put: pull-request-repository
-    params:
-      path: pull-request-repository
-      status: pending
+  - put: pull-request
+    params: { path: pull-request, status: pending }
     on_success:
-      put: pull-request-repository
-      params:
-        path: pull-request-repository
-        status: success
+      put: pull-request
+      params: { path: pull-request, status: success }
     on_failure:
-      put: pull-request-repository
-      params:
-        path: pull-request-repository
-        status: failure
+      put: pull-request
+      params: { path: pull-request, status: failure }
