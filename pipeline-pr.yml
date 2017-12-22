@@ -77,3 +77,4 @@ jobs:
           attachments: '[
             {"color":"danger","text":"[Reporter Web - $BUILD_PIPELINE_NAME] Failed to verify pull request."}
           ]'
+
