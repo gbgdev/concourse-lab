@@ -18,6 +18,24 @@ jobs:
     trigger: true
   - put: pull-request
     params: { path: pull-request, status: pending }
+  - task: some-task
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source: {repository: yamazaki/bosh_cli}
+        inputs:
+        - name: pull-request
+        run:
+          path: bash
+          args:
+          - -cx
+          - |
+            cd pull-request
+            git rev-parse HEAD  # Same as regular-pr's SHA
+            cd ../regular-pr
+            git rev-parse HEAD
+            sleep 15
     on_success:
       put: pull-request
       params: { path: pull-request, status: success }
