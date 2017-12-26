@@ -13,7 +13,7 @@ resources:
 - name: pull-request
   type: pull-request
   webhook_token: testing
-  check_every: 600h
+  check_every: 24h
   source:
     repo: gbgdev/concourse-lab
     username: {{github-username}}
