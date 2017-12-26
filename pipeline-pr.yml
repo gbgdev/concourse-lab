@@ -28,6 +28,7 @@ jobs:
   plan:
   - get: pull-request
     trigger: true
+    version: every
   - put: pull-request
     params: { path: pull-request, status: pending }
   - put: notify
