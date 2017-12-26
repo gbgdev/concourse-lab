@@ -53,7 +53,8 @@ jobs:
         args:
         - -cx
         - |
-          cd pull-request/demo
+          cd pull-request
+          pr_url=$(git config --get pullrequest.url)
           # npm install
           # npm test
     on_success:
@@ -64,7 +65,7 @@ jobs:
           username: {{slack-username}}
           icon_url: {{slack-icon-url}}
           attachments: '[
-            {"color":"good","text":"[Reporter Web - $BUILD_PIPELINE_NAME] Success on verifying pull request."}
+            {"color":"good","text":"[Reporter Web - $BUILD_PIPELINE_NAME] Success on verifying pull request. $pr_url"}
           ]'
       - put: pull-request
         params: { path: pull-request, status: success }
