@@ -19,7 +19,6 @@ resources:
     username: {{github-username}}
     access_token: {{github-token}}
 
-
 - name: notify
   type: slack-notification
   source:
