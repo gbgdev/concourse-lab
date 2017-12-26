@@ -12,11 +12,13 @@ resource_types:
 resources:
 - name: pull-request
   type: pull-request
-  check_every: 5000ms
+  webhook_token: testing
+  check_every: 600h
   source:
     repo: gbgdev/concourse-lab
     username: {{github-username}}
     access_token: {{github-token}}
+
 
 - name: notify
   type: slack-notification
