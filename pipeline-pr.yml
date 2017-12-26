@@ -3,6 +3,7 @@ resource_types:
   type: docker-image
   source:
     repository: jtarchie/pr
+    tag_filter: v24
 
 - name: slack-notification
   type: docker-image
@@ -55,6 +56,7 @@ jobs:
         - |
           cd pull-request
           pr_url=$(cat .git/id)
+          echo $pr_url
           # npm install
           # npm test
     on_success:
