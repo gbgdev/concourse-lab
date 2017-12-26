@@ -15,6 +15,7 @@ resources:
   check_every: 3s
   source:
     repo: gbgdev/concourse-lab
+    username: {{github-username}}
     access_token: {{github-token}}
 
 - name: notify
