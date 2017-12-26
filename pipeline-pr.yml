@@ -54,7 +54,7 @@ jobs:
         - -cx
         - |
           cd pull-request
-          pr_url=$(git config --get pullrequest.url)
+          pr_url=$(cat .git/id)
           # npm install
           # npm test
     on_success:
