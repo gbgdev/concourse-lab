@@ -1,0 +1,83 @@
+resource_types:
+- name: pull-request
+  type: docker-image
+  source:
+    repository: jtarchie/pr
+    tag: v24
+
+- name: slack-notification
+  type: docker-image
+  source:
+    repository: cfcommunity/slack-notification-resource
+
+resources:
+- name: pull-request
+  type: pull-request
+  webhook_token: testing
+  check_every: 24h
+  source:
+    repo: {{github-repository}}
+    username: {{github-username}}
+    access_token: {{github-token}}
+
+- name: notify
+  type: slack-notification
+  source:
+    url: {{slack-webhook}}
+
+jobs:
+- name: verify-pull-request
+  plan:
+  - get: pull-request
+    trigger: true
+    version: every
+  # - put: pull-request
+  #   params: { path: pull-request, status: pending }
+  - put: notify
+    params:
+      channel: {{slack-channel}}
+      username: {{slack-username}}
+      icon_url: {{slack-icon-url}}
+      attachments: '[
+        {"color":"good","text":"[Reporter Web - $BUILD_PIPELINE_NAME] Verifying new pull request."}
+      ]'
+  - task: run-tests
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: { repository: node, tag: 8-alpine }
+      inputs:
+      - name: pull-request
+      run:
+        path: sh
+        args:
+        - -cx
+        - |
+          cd pull-request
+          npm install
+          npm test
+    on_success:
+      do:
+      - put: notify
+        params:
+          channel: {{slack-channel}}
+          username: {{slack-username}}
+          icon_url: {{slack-icon-url}}
+          attachments: '[
+            {"color":"good","text":"[Reporter Web - $BUILD_PIPELINE_NAME] Pull Request sucessfully verified. <http://ci.fasd.club/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>"}
+          ]'
+      # - put: pull-request
+      #   params: { path: pull-request, status: success }
+    on_failure:
+      do:
+      # - put: pull-request
+      #   params: { path: pull-request, status: failure }
+      - put: notify
+        params:
+          channel: {{slack-channel}}
+          username: {{slack-username}}
+          icon_url: {{slack-icon-url}}
+          attachments: '[
+            {"color":"danger","text":"[Reporter Web - $BUILD_PIPELINE_NAME] Pull Request verification failed. <http://ci.fasd.club/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>"}
+          ]'
