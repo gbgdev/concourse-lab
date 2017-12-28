@@ -13,11 +13,12 @@ resource_types:
 resources:
 - name: pull-request
   type: pull-request
-  webhook_token: testing
-  check_every: 24h
+  webhook_token: {{github-webtoken}}
+  check_every: 1m
   source:
     repo: {{github-repository}}
     username: {{github-username}}
+    password: {{github-token}}
     access_token: {{github-token}}
 
 - name: notify
@@ -31,22 +32,22 @@ jobs:
   - get: pull-request
     trigger: true
     version: every
-  # - put: pull-request
-  #   params: { path: pull-request, status: pending }
+  - put: pull-request
+    params: { path: pull-request, status: pending }
   - put: notify
     params:
       channel: {{slack-channel}}
       username: {{slack-username}}
       icon_url: {{slack-icon-url}}
       attachments: '[
-        {"color":"good","text":"[Reporter Web - $BUILD_PIPELINE_NAME] Pull Request verification started.","footer":"<http://ci.fasd.club/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View details>"}
+        {"color":"good","text":"[Reporter Web - $BUILD_JOB_NAME - Build #$BUILD_NAME] Pull Request verification started.","footer":"<https://ci.0x.se/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View details>"}
       ]'
   - task: run-tests
     config:
       platform: linux
       image_resource:
         type: docker-image
-        source: { repository: node, tag: 8-alpine }
+        source: { repository: node, tag: 9-alpine }
       inputs:
       - name: pull-request
       run:
@@ -56,7 +57,7 @@ jobs:
         - |
           cd pull-request
           npm install
-          npm test
+          CI=true npm run test
     on_success:
       do:
       - put: notify
@@ -65,19 +66,19 @@ jobs:
           username: {{slack-username}}
           icon_url: {{slack-icon-url}}
           attachments: '[
-            {"color":"good","text":"[Reporter Web - $BUILD_PIPELINE_NAME] Pull Request sucessfully verified.","footer":"<http://ci.fasd.club/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View details>"}
+            {"color":"good","text":"[Reporter Web - $BUILD_JOB_NAME - Build #$BUILD_NAME] Pull Request sucessfully verified.","footer":"<http://ci.0x.se/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View details>"}
           ]'
-      # - put: pull-request
-      #   params: { path: pull-request, status: success }
+      - put: pull-request
+        params: { path: pull-request, status: success }
     on_failure:
       do:
-      # - put: pull-request
-      #   params: { path: pull-request, status: failure }
+      - put: pull-request
+        params: { path: pull-request, status: failure }
       - put: notify
         params:
           channel: {{slack-channel}}
           username: {{slack-username}}
           icon_url: {{slack-icon-url}}
           attachments: '[
-            {"color":"danger","text":"[Reporter Web - $BUILD_PIPELINE_NAME] Pull Request verification failed.","footer":"<http://ci.fasd.club/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View details>"}
+            {"color":"danger","text":"[Reporter Web - $BUILD_JOB_NAME - Build #$BUILD_NAME] Pull Request verification failed.","footer":"<http://ci.0x.se/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View details>"}
           ]'
