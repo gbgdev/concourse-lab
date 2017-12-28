@@ -39,7 +39,7 @@ jobs:
       username: {{slack-username}}
       icon_url: {{slack-icon-url}}
       attachments: '[
-        {"color":"good","text":"[Reporter Web - $BUILD_PIPELINE_NAME] Verifying new pull request."}
+        {"color":"good","text":"[Reporter Web - $BUILD_PIPELINE_NAME] Pull Request verification started.","footer":"<http://ci.fasd.club/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View details>"}
       ]'
   - task: run-tests
     config:
@@ -65,7 +65,7 @@ jobs:
           username: {{slack-username}}
           icon_url: {{slack-icon-url}}
           attachments: '[
-            {"color":"good","text":"[Reporter Web - $BUILD_PIPELINE_NAME] Pull Request sucessfully verified. <http://ci.fasd.club/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>"}
+            {"color":"good","text":"[Reporter Web - $BUILD_PIPELINE_NAME] Pull Request sucessfully verified.","footer":"<http://ci.fasd.club/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View details>"}
           ]'
       # - put: pull-request
       #   params: { path: pull-request, status: success }
@@ -79,5 +79,5 @@ jobs:
           username: {{slack-username}}
           icon_url: {{slack-icon-url}}
           attachments: '[
-            {"color":"danger","text":"[Reporter Web - $BUILD_PIPELINE_NAME] Pull Request verification failed. <http://ci.fasd.club/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>"}
+            {"color":"danger","text":"[Reporter Web - $BUILD_PIPELINE_NAME] Pull Request verification failed.","footer":"<http://ci.fasd.club/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View details>"}
           ]'
